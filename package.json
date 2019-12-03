@@ -1,0 +1,23 @@
+{
+  "name": "customized-vue-proj-mobile",
+  "version": "1.0.0",
+  "description": "customized vue development environment",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cookiepool/customized-vue-proj-mobile.git"
+  },
+  "keywords": [
+    "vue",
+    "mobile"
+  ],
+  "author": "LEE",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cookiepool/customized-vue-proj-mobile/issues"
+  },
+  "homepage": "https://github.com/cookiepool/customized-vue-proj-mobile#readme"
+}
