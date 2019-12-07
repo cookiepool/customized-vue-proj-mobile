@@ -124,3 +124,74 @@ npm run dev
 - 热更新功能，在开发过程中自动响应我们的修改并更新，不需要手动刷新。
 - 识别.vue文件，这个是让webpack识别.vue文件并转换成浏览器能使用的内容。
 - 集成vue-router和vuex，做单页面路由不可少，状态管理根据需要来引入即可，不是必须要配置的东西。 
+
+### 3、配置相关工具
+#### 3.1、ES6+转ES5
+首先来一波安装命令，安装好相关的依赖：
+```
+npm install babel-loader @babel-core @babel/preset-env -D
+```
+- bable-loader 这个是用于webpack来处理babel的加载器，用于调用@babel/core的核心API来完成编译。
+- @babel-core babel的核心，核心的api都在包含在这里。
+- @babel/preset-env babel的一个预置环境。
+> 参考我这篇文章来[了解一下babel](https://github.com/cookiepool/summary/issues/17)，当然社区上还有许多大佬写的文章，多看几篇可以了解的更加透彻。
+
+- **修改webpack.config.js**
+
+现在我们需要配置webpack来使其支持babel，这里就需要使用到刚才安装的babel-loader。在配置文件中加入以下代码：
+```
+module: {
+  rules: [
+    {
+      test: /\.jsx?$/,
+      exclude: /node_modules/,
+      use: [
+        {
+          loader: 'babel-loader'
+        }	
+      ]
+    }
+  ]
+}
+```
+- **在项目的根目录新建babel.config.js**
+
+在文件中加入以下内容：
+```
+// babel.config.js
+module.exports = {
+  // 配置预置环境
+  presets: [
+    // 使用的规则
+    "@babel/preset-env"
+  ]
+}
+```
+配置好后，去main.js里面写一些es6+的语法的js代码，然后执行 `npm run dev` 你会发现dist目录下生成的js文件语法都转换成es5的了，但是promise却没有转换，这里我们还需要polyfill。
+
+- **配置polyfill并且按需引入**
+
+输入以下命令安装必须的依赖：
+```
+npm install core-js@2 -S
+```
+安装完毕后去babel.config.js修改代码如下：
+```
+module.exports = {
+  // 配置预置环境
+  presets: [
+    // 使用的规则
+    ["@babel/preset-env", {
+      // 这儿有false, entry, usage三个可选参数，usage可以按需引入polyfill
+      "useBuiltIns": "usage",
+      // 指定corejs版本
+      "corejs": 2
+    }]
+  ]
+}
+```
+这样一来你的js就可以运行在低版本浏览器里面了，比如Promise。
+
+
+
+
