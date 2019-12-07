@@ -70,5 +70,57 @@ npm install webpack-cli -D
 
 文件建好了但是还没有内容，肯定跑不起来，接下来对webpack.config.js操作一番，这里我不叙述具体过程了（#滑稽保命），直接贴代码，里面我写了注释：
 ```
+// build/webpack.config.js
+// node.js里面自带的操作路径的模块
+const path = require('path');
 
+module.exports = {
+    // 指定模式，这儿有none production development三个参数可选
+    // 具体作用请查阅官方文档
+    mode: 'development',
+    // webpack打包的入口文件
+    entry: {
+        main: path.resolve(__dirname, '../src/main.js')
+    },
+    // webpack打包的输出相关的额配置
+    output: {
+        // 打包过后的文件的输出的路径
+        path: path.resolve(__dirname, '../dist'),
+        // 打包后生成的js文件，带hash值来保证文件的唯一性
+        filename: 'js/[name].[hash:4].js',
+        // 生成的chunk文件名
+        chunkFilename: 'js/[name].[hash:4].js',
+        // 资源的引用路径（这个跟你打包上线的配置有关系）
+        publicPath: './'
+    }
+}
 ```
+然后呢再把package.json改造一下，在scripts处添加一句 `dev` 这个命令：
+```
+"scripts": {
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "dev": "webpack ./src/main.js --config ./build/webpack.config.js"
+},
+```
+一顿操作过后，我们开始来试一试这个命令能不能用，在控制台下输入:
+```
+npm run dev
+```
+稍等一会儿就会出现以下信息，则代表我们打包输出成功：
+
+![2.png](https://i.loli.net/2019/12/07/jpS5kTZyzxDlGWC.png)
+
+此时项目的结构变成这个样子：
+
+![3.png](https://i.loli.net/2019/12/07/BAsWHbN17egQLoT.png)
+
+环境搭建到这儿只能说webpack配置正常了，还有许多额外东西需要配置，比如以下
+
+- babel，这个可以把ES6+转换为低浏览器可用的ES5，以及对一些新API做polyfill处理
+- css预处理器，目前css预处理器有很多选择，这里我选择了scss来做配置，当然你不使用css预处理器也是可以的。
+- 文件处理loader，这个主要是项目相关的图片、字体、音视频的处理。
+- html文件自动创建，你打包好的js文件等需要正确的导入html才能正常使用。
+- postcss，这个工具主要是处理css的，安装相关的插件可以实现一些功能，比如自动添加css3的前缀，移动开发中用到的px-to-rem或者px-to-vw等等。
+- 热更新功能，在开发过程中自动响应我们的修改并更新，不需要手动刷新。
+- 识别.vue文件，这个是让webpack识别.vue文件并转换成浏览器能使用的内容。
+- 集成vue-router和vuex，做单页面路由不可少，状态管理根据需要来引入即可，不是必须要配置的东西。 
