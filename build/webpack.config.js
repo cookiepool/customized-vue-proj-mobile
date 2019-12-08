@@ -1,8 +1,12 @@
 // build/webpack.config.js
 // node.js里面自带的操作路径的模块
 const path = require("path");
-//引入htmlWebpackPlugin自动导入js文件
+// 引入htmlWebpackPlugin自动导入js文件
 const htmlWebpackPlugin = require('html-webpack-plugin');
+// 引入vue-loader插件
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
+// 引入webpack
+const webpack = require('webpack');
 
 module.exports = {
   // 指定模式，这儿有none production development三个参数可选
@@ -48,6 +52,74 @@ module.exports = {
             options: {
               implementation: require('dart-sass')
             }
+          },
+          {
+            loader: 'postcss-loader'
+          }
+        ]
+      },
+      {
+        test: /\.(jpe?g|png|gif)$/i,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 5120,
+              // 当文件大于5KB时调用file-loader
+              fallback: {
+                loader: 'file-loader',
+                options: {
+                  name: 'img/[name].[hash:4].[ext]'
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+				test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
+				use: [
+					{
+						loader: 'url-loader',
+						options: {
+							limit: 5120,
+							fallback: {
+								loader: 'file-loader',
+								options: {
+									name: 'media/[name].[hash:4].[ext]'
+								}
+							}
+						}
+					}
+				]
+			},
+			{
+				test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/i,
+				use: [
+					{
+						loader: 'url-loader',
+						options: {
+							limit: 5120,
+							fallback: {
+								loader: 'file-loader',
+								options: {
+									name: 'fonts/[name].[hash:4].[ext]'
+								}
+							}
+						}
+					}
+				]
+      },
+      {
+        test: /\.vue$/,
+        use: [
+          {
+            loader: 'vue-loader',
+            options: {
+              compilerOptions: {
+                preserveWhitespace: false
+              }
+            }
           }
         ]
       }
@@ -59,6 +131,30 @@ module.exports = {
       template: path.resolve(__dirname, '../public/index.html'),
       // 输出的文件
       filename: path.resolve(__dirname, '../dist/index.html')
-    })
-  ]
+    }),
+    new VueLoaderPlugin(),
+    // 辅助HotModuleReplacementPlugin插件
+    new webpack.NamedModulesPlugin(),
+    // 启用热更新必须的
+		new webpack.HotModuleReplacementPlugin()
+  ],
+  resolve: {
+		alias: {
+      // 写了这句，我们可以这样写代码 import Vue from 'vue'
+      'vue$': 'vue/dist/vue.runtime.esm.js',
+      // 写了这句，我们可以这样写代码 import api from '@/api/api.js'，省去到处找路径定位到src的麻烦
+      '@': path.resolve(__dirname, '../src')
+    },
+    // 添加一个 resolve.extensions 属性，方便我们引入依赖或者文件的时候可以省略后缀
+    // 我们在引入文件时可以这样写 import api from '@/api/api'。
+    extensions: ['*', '.js', '.vue']
+	},
+  devServer: {
+    // 默认情况不设置这个只能通过localhost:9000来访问，现在可以通过本机局域网ip来访问，
+    // 比如192.168.12.21:9000，手机在这个局网内也可以访问
+    host: '0.0.0.0',
+    hot: true,
+    port: 9000,
+    contentBase: './dist'
+  }
 };

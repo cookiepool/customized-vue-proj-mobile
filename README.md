@@ -266,5 +266,221 @@ plugins: [
 ]
 ```
 
+#### 3.4、配置字体、图片等文件的处理
+开发过程肯定会遇到很多媒体文件，特别是图片，webapck有专门的loader来处理这些文件，先安装好依赖：
+```
+npm install url-loader file-loader -D
+```
+- url-loader和file-loader，这两个其实功能差不多，url-loader的好处就是当文件小于我们指定的大小时，它可以把媒体文件转换成base64编码，这样可以减少项目的图片请求，提高访问速度。
+
+然后我们在webpack的配置文件中加入以下代码：
+```
+{
+  test: /\.(jpe?g|png|gif)$/i,
+  use: [
+    {
+      loader: 'url-loader',
+      options: {
+        limit: 5120,
+        // 当文件大于5KB时调用file-loader
+        fallback: {
+          loader: 'file-loader',
+          options: {
+            name: 'img/[name].[hash:4].[ext]'
+          }
+        }
+      }
+    }
+  ]
+},
+{
+  test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
+  use: [
+    {
+      loader: 'url-loader',
+      options: {
+        limit: 5120,
+        fallback: {
+          loader: 'file-loader',
+          options: {
+            name: 'media/[name].[hash:4].[ext]'
+          }
+        }
+      }
+    }
+  ]
+},
+{
+  test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/i,
+  use: [
+    {
+      loader: 'url-loader',
+      options: {
+        limit: 5120,
+        fallback: {
+          loader: 'file-loader',
+          options: {
+            name: 'fonts/[name].[hash:4].[ext]'
+          }
+        }
+      }
+    }
+  ]
+},
+```
+以上我们就配置好了媒体文件相关的处理。
+
+#### 3.5、让webpack识别vue文件
+安装依赖：
+```
+npm install vue-loader vue-template-compiler -D
+```
+然后安装vue核心
+```
+npm install vue -S
+```
+- vue-loader必须结合vue-template-compiler来使用，否则是不能完成转换的。
+
+首先配置module里面的内容：
+```
+{
+  test: /\.vue$/,
+  use: [
+    {
+      loader: 'vue-loader',
+      options: {
+        compilerOptions: {
+          preserveWhitespace: false
+        }
+      }
+    }
+  ]
+}
+```
+配置里面有个compilerOptions的参数preserveWhitespace为false，这个意思是当它的值为true时意味着编译好的渲染函数会保留所有 HTML 标签之间的空格。如果设置为 false，则标签之间的空格会被忽略。这能够略微提升一点性能但是可能会影响到内联元素的布局。具体参考此处：[链接](https://vue-loader.vuejs.org/zh/options.html#compileroptions)
+
+配置好module后我们还要引入插件，这个是必须的
+```
+// 引入vue-loader插件
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
+
+// 添加到plugins中
+new VueLoaderPlugin()
+```
+具体的大家可以参考此处：[链接](https://vue-loader.vuejs.org/zh/guide/)
+
+然后我们还需要配置alias，这样可以减少路径过长引用的麻烦：
+```
+resolve: {
+  alias: {
+    // 写了这句，我们可以这样写代码 import Vue from 'vue'
+    'vue$': 'vue/dist/vue.runtime.esm.js',
+    // 写了这句，我们可以这样写代码 import api from '@/api/api.js'，省去到处找路径定位到src的麻烦
+    '@': path.resolve(__dirname, '../src')
+  },
+  // 添加一个 resolve.extensions 属性，方便我们引入依赖或者文件的时候可以省略后缀
+  // 我们在引入文件时可以这样写 import api from '@/api/api'。
+  extensions: ['*', '.js', '.vue']
+},
+```
+
+#### 3.6、配置postcss
+这个地方我配置了三个插件，autoprefixer、postcss-pxtorem、postcss-px-to-viewport，后两个你只需要配置其中一个即可，主要看你开发使用的rem还是vw，自行选择即可。
+```
+npm install postcss-loader autoprefixer postcss-pxtorem postcss-px-to-viewport -D
+```
+- postcss-loader 负责postcss相关的操作。
+- autoprefixer 为浏览器添加不同的css3前缀。
+- postcss-pxtorem px自动转换为rem。
+- postcss-px-to-viewport px自动转换为vw|vh。
+
+安装好依赖过后，在项目的根目录建立文件 `postcss.config.js`，然后在文件中输入以下内容：
+```
+module.exports = {
+  plugins: {
+    // 这个工具可以实现自动添加CSS3前缀
+		"autoprefixer": {},
+		// 如果你使用rem来实现移动端多设备适配，这个工具可以把px转换为rem
+		/* "postcss-pxtorem": {
+			rootValue: 37.5, // 指定转换倍率，我现在设置这个表示1rem=37.5px;
+			propList: ['*'], // 属性列表，表示你要把哪些css属性的px转换成rem，这个*表示所有
+			minPixelValue: 1, // 需要转换的最小值，一般1px像素不转换，以上才转换
+			unitPrecision: 6, // 转换成rem单位的小数点后的保留位数
+			selectorBalckList: ['van'], // 匹配不被转换为rem的选择器
+			replace: true, // 替换包含rem的规则，而不是添加回退
+			mediaQuery: false // 允许在媒体查询中转换px
+		}, */
+		// 如果你使用vw来实现移动端多设备适配，这个工具可以把px转换为vw
+		"postcss-px-to-viewport": {
+			unitToConvert: 'px', // 把什么单位转换成vw
+			viewportWidth: 750, // 这个可以按照你的设计稿来设置，是750就设置750，375就设置成375
+			unitPrecision: 6, // 转换成vw单位的小数点后的保留位数
+			propList: ['*'], // 属性列表，表示你要把哪些css属性的px转换成vw，这个*表示所有
+			viewportUnit: 'vw', // 使用的单位，目前可选单位有vw,vh。一般我们都有vw
+			fontViewportUnit: 'vw', // 字体使用的单位
+			selectorBlackList: [], // 匹配不被转换为vw的选择器
+			minPixelValue: 1, // 需要转换的最小值，一般1px像素不转换，以上才转换
+			mediaQuery: false, // 允许在媒体查询中转换px
+			replace: true, // 替换包含vw的规则，而不是添加回退
+			exclude: [], // 忽略一些文件，比如“node_modules”，可以是正则表达式
+			landscape: false,  // ......
+			landscapeUnit: 'vw', // ......
+			landscapeWidth: 568 // ......
+		}
+  }
+}
+```
+然后呢，webpack配置加上：
+```
+{
+  test: /\.(scss|sass)$/,
+  use: [
+    {
+      loader: 'style-loader',
+    },
+    {
+      loader: 'css-loader',
+    },
+    {
+      loader: 'sass-loader',
+      options: {
+        implementation: require('dart-sass')
+      }
+    },
+    {
+      loader: 'postcss-loader'
+    }
+  ]
+}
+```
+
+#### 3.7、配置热更新功能
+安装依赖：
+```
+npm install webpack-dev-server -D
+```
+安装完成后，进行如下的配置：
+```
+// 引入webpack
+const webpack = require('webpack');
+
+// 配置devServer
+devServer: {
+  // 默认情况不设置这个只能通过localhost:9000来访问，现在可以通过本机局域网ip来访问，
+  // 比如192.168.12.21:9000，手机在这个局网内也可以访问
+  host: '0.0.0.0',
+  hot: true,
+  port: 9000,
+  contentBase: './dist'
+}
+
+// 配置plugins
+new webpack.NamedModulesPlugin(), // 辅助HotModuleReplacementPlugin插件
+new webpack.HotModuleReplacementPlugin(), // 启用热更新必须的
+```
+### 4、定义环境变量
+
+
+
 
 
