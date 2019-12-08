@@ -1,6 +1,8 @@
 // build/webpack.config.js
 // node.js里面自带的操作路径的模块
 const path = require("path");
+//引入htmlWebpackPlugin自动导入js文件
+const htmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   // 指定模式，这儿有none production development三个参数可选
@@ -31,7 +33,32 @@ module.exports = {
             loader: 'babel-loader'
           }	
         ]
+      },
+      {
+        test: /\.(scss|sass)$/,
+        use: [
+          {
+            loader: 'style-loader',
+          },
+          {
+            loader: 'css-loader',
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              implementation: require('dart-sass')
+            }
+          }
+        ]
       }
     ]
-  }
+  },
+  plugins: [
+    new htmlWebpackPlugin({
+      // 指定模板
+      template: path.resolve(__dirname, '../public/index.html'),
+      // 输出的文件
+      filename: path.resolve(__dirname, '../dist/index.html')
+    })
+  ]
 };

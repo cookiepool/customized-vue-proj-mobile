@@ -192,6 +192,79 @@ module.exports = {
 ```
 这样一来你的js就可以运行在低版本浏览器里面了，比如Promise。
 
+#### 3.2、配置css预处理器
+
+还是先安装依赖
+```
+npm install sass-loader dart-sass css-loader style-loader -D
+```
+- style-loader 该loader主要是把css解析到html的style标签上。
+- css-loader 该loader用来解析css，注意在调用style-loader和css-loader时，css-loader要先于style-loader执行，不然会报错，当你使用以下写法时：
+```
+use: [{loader: 'style-loader'}, {loader: 'css-loader'}]
+```
+因为loader加载是从右往左加载。（[为什么从右往左加载](https://blog.csdn.net/qq_37109325/article/details/80169289) ）这里的编译顺序是先用css-loader将css代码编译，再交给style-loader插入到网页里面去。所以css-loader在右，style-loader在左。
+
+- sass-loader 该loader把scss或sass转换为css。
+- dart-sass 这个工具类似于编译器，转换scss语法，结合到sass-loader使用，其实还有个node-sass可以使用。使用node-sass的话可以不用在webpack的配置文件里面指定，只需要用npm安装好node-sass即可，这儿我使用了dart-sass所以要在implementation中指定。
+
+下载安装好依赖过后，在配置文件 `webpack.config.js` 中的 `module->rules` 里面加入以下代码：
+```
+{
+  test: /\.(scss|sass)$/,
+  use: [
+    {
+      loader: 'style-loader',
+    },
+    {
+      loader: 'css-loader',
+    },
+    {
+      loader: 'sass-loader',
+      options: {
+        implementation: require('dart-sass')
+      }
+    }
+  ]
+}
+```
+
+### 3.3、创建Html文件以及相关处理
+
+首先在项目目录创建一个目录public，里面再创建一个index.html，作为单页面的唯一入口。代码如下：
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>customized-vue-proj-mobile</title>
+</head>
+<body>
+  <div id="app"></div>
+</body>
+</html>
+```
+此时目录结构变成如图所示
+
+![4.png](https://i.loli.net/2019/12/08/jQhDNcRlqPKi12x.png)
+
+创建好文件后我们需要一个插件来处理html文件，只有js文件正常导入到html文件我们的项目才能运行起来，输入以下命令来安装 `html-webpack-plugin`：
+```
+npm install html-webpack-plugin -D
+```
+安装完成后，再webpack配置文件的plugins中加入以下代码：
+```
+plugins: [
+  new htmlWebpackPlugin({
+    // 指定模板
+    template: path.resolve(__dirname, '../public/index.html'),
+    // 输出的文件
+    filename: path.resolve(__dirname, '../dist/index.html')
+  })
+]
+```
 
 
 
