@@ -229,7 +229,7 @@ use: [{loader: 'style-loader'}, {loader: 'css-loader'}]
 }
 ```
 
-### 3.3、创建Html文件以及相关处理
+#### 3.3、创建Html文件以及相关处理
 
 首先在项目目录创建一个目录public，里面再创建一个index.html，作为单页面的唯一入口。代码如下：
 ```
@@ -373,7 +373,7 @@ new VueLoaderPlugin()
 ```
 resolve: {
   alias: {
-    // 写了这句，我们可以这样写代码 import Vue from 'vue'
+    // 写了这句，我们可以这样写代码 import Vue from 'vue', 并且引入的是vue/dist/vue.runtime.esm.js这个版本，不然默认引入的是vue.js。这个在github的vue官方仓库dist目录下有解释。
     'vue$': 'vue/dist/vue.runtime.esm.js',
     // 写了这句，我们可以这样写代码 import api from '@/api/api.js'，省去到处找路径定位到src的麻烦
     '@': path.resolve(__dirname, '../src')
@@ -479,8 +479,73 @@ new webpack.NamedModulesPlugin(), // 辅助HotModuleReplacementPlugin插件
 new webpack.HotModuleReplacementPlugin(), // 启用热更新必须的
 ```
 ### 4、定义环境变量
+这个主要是定义这个玩意儿 `process.env.NODE_ENV` ，定义好这个我们一般可以来判断什么样的环境执行什么样的代码，我们知道webpack的打包环境和开发环境配置一般是不一样的，这里不展开，后面会讲。比如我们在入口main.js里面这样来写代码判断：
+```
+if(process.env.NODE_ENV === 'development'){ 
+  //开发环境 do something
+}else if(process.env.NODE_ENV === 'production') {
+  //生产环境 do something
+}
+```
+那么定义这个环境怎么操作呢，第一种是借助webpack的插件DefinePlugin，
+- 使用DefinePlugin
+我们在plugins里面加入以下代码：
+```
+new webpack.DefinePlugin({
+  'process.env': {
+    NODE_ENV: JSON.stringify('development')
+  }
+}),
+```
+那么我们最终打包过后访问到的process.env.NODE_ENV的值就是development。
+
+另一种使用webpack4自己集成了的环境判断，我们只需要在配置文件里面生命mode即可，推荐使用这种
+
+- 使用webpack4的mode参数
+```
+module.exports = {
+  // 有none production development三个参数可选，不设置mode的话默认的process.env.NODE_ENV值为production
+  mode: "development",
+  entry: {}
+  .....
+}
+```
+有了上面的mode设置，我们照样能取到process.env.NODE_ENV的值。
+关于process.env.NODE_ENV的知识点这里有几篇文章可以参考：
+> [链接-1](https://juejin.im/post/5a4ed5306fb9a01cbc6e2ee2)
+[链接-2](https://juejin.im/post/5868985461ff4b0057794959)
+[链接-3](https://www.jianshu.com/p/83e8909fc1cd)
+
+5、集成Vue全家桶
+安装依赖
+```
+npm install vue vuex vue-router -S
+```
+安装完依赖过后，在src目录下新建一个App.vue的文件。写入以下代码：
+```
+<template>
+  <div id="app">
+    <router-view />
+  </div>
+</template>
+
+<script>
+export default {
+  
+}
+</script>
+
+<style lang="scss">
+
+</style>
+```
+在src下再新建router、store两个目录，再目录下分别新建router.js和store.js。顺便再把其他文件夹也建好，如components、assets、views
 
 
+main.js里面修改为如下代码：
+```
+
+```
 
 
 

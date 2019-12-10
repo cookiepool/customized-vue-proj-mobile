@@ -10,7 +10,7 @@ const webpack = require('webpack');
 
 module.exports = {
   // 指定模式，这儿有none production development三个参数可选
-  // 具体作用请查阅官方文档
+  // 具体作用请查阅官方文档，（跟下面的DefinePlugin二选一）
   mode: "development",
   // webpack打包的入口文件
   entry: {
@@ -136,7 +136,13 @@ module.exports = {
     // 辅助HotModuleReplacementPlugin插件
     new webpack.NamedModulesPlugin(),
     // 启用热更新必须的
-		new webpack.HotModuleReplacementPlugin()
+    new webpack.HotModuleReplacementPlugin(),
+    // 定义环境变量（跟上面mode的参数二选一即可）
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify('development')
+      }
+    })
   ],
   resolve: {
 		alias: {

@@ -1,12 +1,7 @@
-console.log('Hello World！');
+import Vue from 'vue';
+import App from './App.vue';
 
-let a = 23;
+new Vue({
+  render: h => h(App),
 
-const b = 26;
-
-let pro = new Promise((resolve, reject) => {
-  console.log('hahaha')
-  setTimeout(() => {
-    resolve();
-  }, 2000)
-})
+}).$mount('#app');
