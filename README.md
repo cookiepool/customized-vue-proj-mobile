@@ -539,12 +539,30 @@ export default {
 
 </style>
 ```
-在src下再新建router、store两个目录，再目录下分别新建router.js和store.js。顺便再把其他文件夹也建好，如components、assets、views
+在src下再新建router、store两个目录，再目录下分别新建router.js和store.js。顺便再把其他文件夹也建好，如components、assets、views。现在我的目录结构如下图所示：
+
+![4.png](https://i.loli.net/2019/12/11/QfgPOBXhT75CsUu.png)
 
 
 main.js里面修改为如下代码：
 ```
+import Vue from "vue";
+import App from "./App.vue";
+import router from "./router";
 
+new Vue({
+  router,
+  render: h => h(App)
+}).$mount("#app");
+```
+建好这些文件过后其实后面的代码书写就跟脚手架搭建好的写法一样，这里就不在演示其它文件的代码怎么书写了，到时可以参考我的源代码。
+
+这个时候，我们直接npm run dev的话会打包，所以我们需要修改一下package.json的scripts中的dev改成如下的代码：
+```
+"scripts": {
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "dev": "webpack-dev-server --config ./build/webpack.config.js"
+},
 ```
 
 

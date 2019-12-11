@@ -138,11 +138,11 @@ module.exports = {
     // 启用热更新必须的
     new webpack.HotModuleReplacementPlugin(),
     // 定义环境变量（跟上面mode的参数二选一即可）
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify('development')
-      }
-    })
+    // new webpack.DefinePlugin({
+    //   'process.env': {
+    //     NODE_ENV: JSON.stringify('development')
+    //   }
+    // })
   ],
   resolve: {
 		alias: {
@@ -160,7 +160,6 @@ module.exports = {
     // 比如192.168.12.21:9000，手机在这个局网内也可以访问
     host: '0.0.0.0',
     hot: true,
-    port: 9000,
-    contentBase: './dist'
+    port: 9000
   }
 };
