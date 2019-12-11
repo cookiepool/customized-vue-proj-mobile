@@ -48,7 +48,7 @@ export default {
         line-height: 50px;
       }
       .place-holder {
-        /* flex: 0 0 auto; */
+        flex: 0 0 auto;
         width: 20px;
         height: 100px;
       }

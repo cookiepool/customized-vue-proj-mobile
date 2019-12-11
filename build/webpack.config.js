@@ -7,6 +7,8 @@ const htmlWebpackPlugin = require('html-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 // 引入webpack
 const webpack = require('webpack');
+// 引入清除打包后文件的插件（最新版的需要解构，不然会报不是构造函数的错，而且名字必须写CleanWebpackPlugin）
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
   // 指定模式，这儿有none production development三个参数可选
@@ -25,7 +27,7 @@ module.exports = {
     // 生成的chunk文件名
     chunkFilename: "js/[name].[hash:4].js",
     // 资源的引用路径（这个跟你打包上线的配置有关系）
-    publicPath: "./"
+    publicPath: "/"
   },
   module: {
     rules: [
@@ -58,24 +60,43 @@ module.exports = {
           }
         ]
       },
+      // {
+      //   test: /\.(jpe?g|png|gif)$/i,
+      //   use: [
+      //     {
+      //       loader: 'url-loader',
+      //       options: {
+      //         limit: 5120,
+      //         // 当文件大于5KB时调用file-loader
+      //         fallback: {
+      //           loader: 'file-loader',
+      //           options: {
+      //             name: 'img/[name].[hash:4].[ext]'
+      //           }
+      //         }
+      //       }
+      //     }
+      //   ]
+      // },
       {
-        test: /\.(jpe?g|png|gif)$/i,
-        use: [
-          {
-            loader: 'url-loader',
-            options: {
+				test: /\.(jpe?g|png|gif)$/i,
+				use: [
+					{
+						loader: 'url-loader',
+						options: {
               limit: 5120,
-              // 当文件大于5KB时调用file-loader
+              // 这个参数要设置成false,不然生成图片的路径时[object Module]
+              esModule: false,
               fallback: {
-                loader: 'file-loader',
-                options: {
-                  name: 'img/[name].[hash:4].[ext]'
-                }
-              }
-            }
-          }
-        ]
-      },
+								loader: 'file-loader',
+								options: {
+									name: 'images/[name].[hash:4].[ext]'
+								}
+							}
+						}
+					}
+				]
+			},
       {
 				test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
 				use: [
@@ -126,6 +147,7 @@ module.exports = {
     ]
   },
   plugins: [
+    new CleanWebpackPlugin(),
     new htmlWebpackPlugin({
       // 指定模板
       template: path.resolve(__dirname, '../public/index.html'),
@@ -160,6 +182,7 @@ module.exports = {
     // 比如192.168.12.21:9000，手机在这个局网内也可以访问
     host: '0.0.0.0',
     hot: true,
-    port: 9000
+    port: 9200,
+    contentBase: './dist'
   }
 };

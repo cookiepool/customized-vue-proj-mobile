@@ -1,6 +1,8 @@
 <template>
   <div class="all-wraper">
     <HeadCommon :title="'首页'"/>
+
+    <img src="../assets/images/erer434345.gif" alt="动图">
   </div>
 </template>
 
