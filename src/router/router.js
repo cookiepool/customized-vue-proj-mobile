@@ -5,6 +5,7 @@ Vue.use(Router);
 
 import App from '../App.vue';
 import Home from '../views/Home.vue';
+import RouterTest from '../views/RouterTest.vue';
 
 const routes = [
   {
@@ -20,6 +21,11 @@ const routes = [
         path: '/',
         name: 'home',
         component: Home
+      },
+      {
+        path: 'routertest',
+        name: 'routertest',
+        component: RouterTest
       }
     ]
   }

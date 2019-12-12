@@ -1,7 +1,7 @@
 <template>
   <div class="all-wraper">
     <div class="header-box">
-      <img class="back-button" src="../../assets/images/back_arrow.png" alt="图标">
+      <img @click="goBack" class="back-button" src="../../assets/images/back_arrow.png" alt="图标">
       <p class="title-name">{{ titleName }}</p>
       <p class="place-holder"></p>
     </div>
@@ -17,6 +17,11 @@ export default {
   data() {
     return {
       titleName: this.title
+    }
+  },
+  methods: {
+    goBack() {
+      history.length > 1 ? this.$router.go(-1) : this.$router.replace('/');
     }
   }
 }

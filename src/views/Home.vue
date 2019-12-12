@@ -9,6 +9,8 @@
     </div>
     <hr>
     <div class="bg-test"></div>
+    <hr>
+    <button @click="jumpToRouterTest">路由测试</button>
   </div>
 </template>
 
@@ -29,7 +31,9 @@ export default {
 
   },
   methods: {
-
+    jumpToRouterTest() {
+      this.$router.push('/routertest');
+    }
   }
 }
 </script>
