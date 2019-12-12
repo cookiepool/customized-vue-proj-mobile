@@ -64,15 +64,11 @@ module.exports = {
 				use: [
 					{
 						loader: 'url-loader',
-						options: {
-              // 当文件大于5kb时走file-loader相关的配置
-              limit: 5120,
-              // 这个参数要设置成false,不然生成图片的路径时[object Module]
-              esModule: false,
-              // 当文件大于5kb时走file-loader相关的配置
-              fallback: 'file-loader',
-              // 生成的路径和文件名
-              name: 'images/[name].[hash:4].[ext]'
+						options: {              
+              limit: 5120, // 当文件大于5kb时走file-loader相关的配置             
+              esModule: false, // 这个参数要设置成false,不然生成图片的路径时[object Module]              
+              fallback: 'file-loader', // 当文件大于5kb时走file-loader相关的配置
+              name: 'images/[name].[hash:4].[ext]' // 生成的路径和文件名
 						}
 					}
 				]
