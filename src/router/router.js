@@ -10,8 +10,7 @@ import RouterTest from '../views/RouterTest.vue';
 const routes = [
   {
     path: '/',
-    name: 'app',
-    component: App,
+    component: App, // 一级路由不要写name属性
     children: [
       {
         path: '/home',

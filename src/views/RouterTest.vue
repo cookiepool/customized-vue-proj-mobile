@@ -23,5 +23,7 @@ export default {
 </script>
 
 <style lang="scss">
-
+  .text {
+    color: firebrick !important;
+  }
 </style>
