@@ -281,14 +281,14 @@ npm install url-loader file-loader -D
     {
       loader: 'url-loader',
       options: {
+        // 当文件大于5kb时走file-loader相关的配置
         limit: 5120,
-        // 当文件大于5KB时调用file-loader
-        fallback: {
-          loader: 'file-loader',
-          options: {
-            name: 'img/[name].[hash:4].[ext]'
-          }
-        }
+        // 这个参数要设置成false,不然生成图片的路径时[object Module]
+        esModule: false,
+        // 当文件大于5kb时走file-loader相关的配置
+        fallback: 'file-loader',
+        // 生成的路径和文件名
+        name: 'images/[name].[hash:4].[ext]'
       }
     }
   ]
@@ -300,12 +300,9 @@ npm install url-loader file-loader -D
       loader: 'url-loader',
       options: {
         limit: 5120,
-        fallback: {
-          loader: 'file-loader',
-          options: {
-            name: 'media/[name].[hash:4].[ext]'
-          }
-        }
+        esModule: false,
+        fallback: 'file-loader',
+        name: 'media/[name].[hash:4].[ext]'
       }
     }
   ]
@@ -317,12 +314,9 @@ npm install url-loader file-loader -D
       loader: 'url-loader',
       options: {
         limit: 5120,
-        fallback: {
-          loader: 'file-loader',
-          options: {
-            name: 'fonts/[name].[hash:4].[ext]'
-          }
-        }
+        esModule: false,
+        fallback: 'file-loader',
+        name: 'fonts/[name].[hash:4].[ext]'
       }
     }
   ]
@@ -470,7 +464,7 @@ devServer: {
   // 比如192.168.12.21:9000，手机在这个局网内也可以访问
   host: '0.0.0.0',
   hot: true,
-  port: 9000,
+  port: 9200,
   contentBase: './dist'
 }
 
@@ -548,7 +542,7 @@ main.js里面修改为如下代码：
 ```
 import Vue from "vue";
 import App from "./App.vue";
-import router from "./router";
+import router from "./router.js";
 
 new Vue({
   router,
@@ -564,6 +558,7 @@ new Vue({
   "dev": "webpack-dev-server --config ./build/webpack.config.js"
 },
 ```
+
 
 
 

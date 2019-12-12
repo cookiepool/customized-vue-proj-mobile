@@ -25,12 +25,12 @@ export default {
 <style lang="scss">
   .all-wraper {
     height: 90px;
-    .head-box {
+    .header-box {
       position: fixed;
       left: 0;
       top: 0;
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
       width: 100%;
       height: 90px;

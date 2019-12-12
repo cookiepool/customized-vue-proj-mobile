@@ -60,39 +60,20 @@ module.exports = {
           }
         ]
       },
-      // {
-      //   test: /\.(jpe?g|png|gif)$/i,
-      //   use: [
-      //     {
-      //       loader: 'url-loader',
-      //       options: {
-      //         limit: 5120,
-      //         // 当文件大于5KB时调用file-loader
-      //         fallback: {
-      //           loader: 'file-loader',
-      //           options: {
-      //             name: 'img/[name].[hash:4].[ext]'
-      //           }
-      //         }
-      //       }
-      //     }
-      //   ]
-      // },
       {
 				test: /\.(jpe?g|png|gif)$/i,
 				use: [
 					{
 						loader: 'url-loader',
 						options: {
+              // 当文件大于5kb时走file-loader相关的配置
               limit: 5120,
               // 这个参数要设置成false,不然生成图片的路径时[object Module]
               esModule: false,
-              fallback: {
-								loader: 'file-loader',
-								options: {
-									name: 'images/[name].[hash:4].[ext]'
-								}
-							}
+              // 当文件大于5kb时走file-loader相关的配置
+              fallback: 'file-loader',
+              // 生成的路径和文件名
+              name: 'images/[name].[hash:4].[ext]'
 						}
 					}
 				]
@@ -103,13 +84,10 @@ module.exports = {
 					{
 						loader: 'url-loader',
 						options: {
-							limit: 5120,
-							fallback: {
-								loader: 'file-loader',
-								options: {
-									name: 'media/[name].[hash:4].[ext]'
-								}
-							}
+              limit: 5120,
+              esModule: false,
+              fallback: 'file-loader',
+              name: 'media/[name].[hash:4].[ext]'
 						}
 					}
 				]
@@ -120,13 +98,10 @@ module.exports = {
 					{
 						loader: 'url-loader',
 						options: {
-							limit: 5120,
-							fallback: {
-								loader: 'file-loader',
-								options: {
-									name: 'fonts/[name].[hash:4].[ext]'
-								}
-							}
+              limit: 5120,
+              esModule: false,
+              fallback: 'file-loader',
+              name: 'fonts/[name].[hash:4].[ext]'
 						}
 					}
 				]
