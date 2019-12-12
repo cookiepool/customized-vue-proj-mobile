@@ -3,6 +3,10 @@
 在使用Vue开发单页面的时候，我们大多数时候都是使用的官方CLI工具，现在的Vue CLI已经迭代到了4.X了，可以说很成熟稳定了，能满足大多数要求，而且上手简单。本着折腾摸索的精神，还是打算自己搭建一个开发环境，熟悉各个流程。
 > 本文不涉及Webpack和babel知识的讲解，建议了解一下Webpack的基本知识来看这篇文章会更好理解。这个在网上能找到很多教程。关于node.js和npm安装在这里也不再赘述，相信做前端开发这个是电脑必备的。
 
+> 如果你在搭建过程中遇到不明的报错，查看报错信息并记录排查，有时候相关的插件在更新过后使用方式会发生变化，有可能你按着我的配置走下来也报错，那么看看官方文档（一般在github上查相关的仓库即可）有没有改变写法，比如这次我配置的clean-webpack-plugin插件，以前的版本是不需要结构的，但是现在必须结构了，不然它会报错并提示不是构造函数
+
+- [首发地址](https://github.com/cookiepool/summary/issues)
+
 我的node.js及npm版本如下：
 ```
 node -v
@@ -562,6 +566,271 @@ new Vue({
 ![6.gif](https://i.loli.net/2019/12/12/uKvnxQhtjTBfF5I.gif)
 
 ### 6、区分开发环境和生产环境
-做单页面开发我们都知道，开发环境和生产环境是不太一样的，平时使用官方cli时开发命令用的npm run dev，而打包发布时npm run build。这里面的配置肯定存在区别。
+做单页面开发我们都知道，开发环境和生产环境是不太一样的，平时使用官方cli时开发命令用的npm run dev，而打包发布时npm run build。这里面的配置肯定是存在区别的。
 
+现在在build目录下新建webpack.dev.js和webpack.prod.js两个文件，用来区分开发环境和生产环境。同时把开发环境和生产环境通用的配置都写在webpack.config.js里面。
+
+- 开发环境
+> 1、webpack的mode属性值设置为development，开启这个不会压缩代码。</br>
+> 2、需要webpack-dev-server和热更新。</br>
+> 3、css不用提取到单独文件并压缩（当然你也可以提出来）</br>
+> 4、不需要构建前清除上一次构建内容
+> 5、不需要打包分析
+
+- 生产环境
+> 1、webpack的mode属性值设置为production，开启这个会压缩代码。</br>
+> 2、不需要webpack-dev-server和热更新。</br>
+> 3、css要提取到单独文件并压缩</br>
+> 4、需要构建前清除上一次构建内容
+> 5、需要打包分析
+
+好了，大概了解了区别后，我们还需要单独安装其他没有的依赖，先来波安装命令，一把梭：
+```
+npm i clean-webpack-plugin copy-webpack-plugin @intervolga/optimize-cssnano-plugin mini-css-extract-plugin webpack-merge webpack-bundle-analyzer -D
+```
+- clean-webpack-plugin 这个插件主要是用来清除上一次打包的内容，因为每次打包文件后面会生成新的hash值，不及时清除dist目录会累积很多文件，还容易造成不必要的麻烦。
+- copy-webpack-plugin 有时候我们存在静态资源，也就是不参与打包的文件，这时候我们就需要这个插件来实现拷贝，保证资源可访问。
+- @intervolga/optimize-cssnano-plugin 分离出来的css文件进行压缩。
+- mini-css-extract-plugin 用于把css单独分离出来。
+- webpack-merge 合并webpack配置的插件。
+- webpack-bundle-analyzer 打包过后可以看到各个js文件所占的大小以及在项目中的比例。
+
+接下来修改相关的文件
+#### 6.1、webpack.config.js 
+> 注：这儿我把miniCssExtractPlugin放在通用配置文件里面了，开发和生产都使用
+```
+// build/webpack.config.js
+// node.js里面自带的操作路径的模块
+const path = require("path");
+// 引入htmlWebpackPlugin自动导入js文件
+const htmlWebpackPlugin = require('html-webpack-plugin');
+// 引入vue-loader插件
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
+// 用于提取css到文件中
+const miniCssExtractPlugin = require('mini-css-extract-plugin');
+// 用于压缩css代码
+const optimizeCssnanoPlugin = require('@intervolga/optimize-cssnano-plugin');
+// 拷贝静态资源
+const copyWebpackPlugin = require('copy-webpack-plugin');
+
+module.exports = {
+  // webpack打包的入口文件
+  entry: {
+    main: path.resolve(__dirname, "../src/main.js")
+  },
+  // webpack打包的输出相关的额配置
+  output: {
+    // 打包过后的文件的输出的路径
+    path: path.resolve(__dirname, "../dist"),
+    // 打包后生成的js文件，带hash值来保证文件的唯一性
+    filename: "js/[name].[hash:4].js",
+    // 生成的chunk文件名
+    chunkFilename: "js/[name].[hash:4].js",
+    // 资源的引用路径（这个跟你打包上线的配置有关系）
+    publicPath: "/"
+  },
+  module: {
+    rules: [
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'babel-loader'
+          }	
+        ]
+      },
+      {
+        test: /\.(scss|sass)$/,
+        use: [
+          {
+            loader: miniCssExtractPlugin.loader, // 使用miniCssExtractPlugin.loader代替style-loader
+          },
+          {
+            loader: 'css-loader',
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              implementation: require('dart-sass')
+            }
+          },
+          {
+            loader: 'postcss-loader'
+          }
+        ]
+      },
+      {
+				test: /\.(jpe?g|png|gif)$/i,
+				use: [
+					{
+						loader: 'url-loader',
+						options: {
+              // 当文件大于5kb时走file-loader相关的配置
+              limit: 5120,
+              // 这个参数要设置成false,不然生成图片的路径时[object Module]
+              esModule: false,
+              // 当文件大于5kb时走file-loader相关的配置
+              fallback: 'file-loader',
+              // 生成的路径和文件名
+              name: 'images/[name].[hash:4].[ext]'
+						}
+					}
+				]
+			},
+      {
+				test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
+				use: [
+					{
+						loader: 'url-loader',
+						options: {
+              limit: 5120,
+              esModule: false,
+              fallback: 'file-loader',
+              name: 'media/[name].[hash:4].[ext]'
+						}
+					}
+				]
+			},
+			{
+				test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/i,
+				use: [
+					{
+						loader: 'url-loader',
+						options: {
+              limit: 5120,
+              esModule: false,
+              fallback: 'file-loader',
+              name: 'fonts/[name].[hash:4].[ext]'
+						}
+					}
+				]
+      },
+      {
+        test: /\.vue$/,
+        use: [
+          {
+            loader: 'vue-loader',
+            options: {
+              compilerOptions: {
+                preserveWhitespace: false
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  plugins: [
+    new htmlWebpackPlugin({
+      // 指定模板
+      template: path.resolve(__dirname, '../public/index.html'),
+      // 输出的文件
+      filename: path.resolve(__dirname, '../dist/index.html')
+    }),
+    new VueLoaderPlugin(),
+    // 新建miniCssExtractPlugin实例并配置
+    new miniCssExtractPlugin({
+      filename: 'css/[name].[hash:4].css',
+      chunkFilename: 'css/[name].[hash:4].css'
+    }),
+    // 压缩css
+    new optimizeCssnanoPlugin({
+      sourceMap: true,
+      cssnanoOptions: {
+        preset: ['default', {
+          discardComments: {
+            removeAll: true,
+          },
+        }],
+      },
+    }),
+    // 拷贝静态资源
+    new copyWebpackPlugin([{
+      from: path.resolve(__dirname, '../public'),
+      to: path.resolve(__dirname, '../dist')
+    }])
+  ],
+  resolve: {
+		alias: {
+      // 写了这句，我们可以这样写代码 import Vue from 'vue'
+      'vue$': 'vue/dist/vue.runtime.esm.js',
+      // 写了这句，我们可以这样写代码 import api from '@/api/api.js'，省去到处找路径定位到src的麻烦
+      '@': path.resolve(__dirname, '../src')
+    },
+    // 添加一个 resolve.extensions 属性，方便我们引入依赖或者文件的时候可以省略后缀
+    // 我们在引入文件时可以这样写 import api from '@/api/api'。
+    extensions: ['*', '.js', '.vue']
+	}
+};
+```
+
+#### 6.2、webpack.dev.js
+```
+// build/webpack.dev.js
+// 引入webpack
+const webpack = require('webpack');
+// 引入webpack通用配置
+const webpackCommonConfig = require('./webpack.config.js');
+// 引入配置合并插件
+const merge = require('webpack-merge');
+
+module.exports = merge(webpackCommonConfig, {
+  // 指定模式，这儿有none production development三个参数可选
+  // 具体作用请查阅官方文档
+  mode: "development",
+  plugins: [
+    // 辅助HotModuleReplacementPlugin插件
+    new webpack.NamedModulesPlugin(),
+    // 启用热更新必须的
+    new webpack.HotModuleReplacementPlugin(),
+  ],
+  devServer: {
+    // 默认情况不设置这个只能通过localhost:9000来访问，现在可以通过本机局域网ip来访问，
+    // 比如192.168.12.21:9000，手机在这个局网内也可以访问
+    host: '0.0.0.0',
+    hot: true,
+    port: 9200,
+    contentBase: './dist'
+  }
+});
+```
+
+#### 6.3、webapck.prod.js
+```
+// build/webpack.prod.js
+// 引入清除打包后文件的插件（最新版的需要解构，不然会报不是构造函数的错，而且名字必须写CleanWebpackPlugin）
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+// 引入配置合并插件
+const merge = require('webpack-merge');
+// 引入通用配置
+const webpackCommonConfig = require('./webpack.config.js');
+// 分析打包后模块分析插件
+const webpackBundleAnalyzer = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
+module.exports = merge(webpackCommonConfig, {
+  // 指定模式，这儿有none production development三个参数可选
+  // 具体作用请查阅官方文档
+  mode: "production",
+  plugins: [
+    new CleanWebpackPlugin(),
+    new webpackBundleAnalyzer({
+      analyzerMode: 'static'
+    }),
+  ]
+});
+```
+配置好相关文件后我们再修改下package.json中的scripts：
+```
+"scripts": {
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "dev": "webpack-dev-server --config ./build/webpack.dev.js",
+  "build": "webpack --config ./build/webpack.prod.js"
+},
+```
+
+## 最后
+相关配置到这儿就结束了，后期会继续更新优化方面的内容，如代码拆分这些，本篇只是如何来搭建一个环境并跑起来，并没有优化相关的内容。如有错误还请大家交流指出，觉得不错的话点个赞再走吧！
+
+相关代码我已经提交到仓库了，[链接地址](https://github.com/cookiepool/customized-vue-proj-mobile)
 
