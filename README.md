@@ -510,7 +510,7 @@ module.exports = {
 [链接-2](https://juejin.im/post/5868985461ff4b0057794959)
 [链接-3](https://www.jianshu.com/p/83e8909fc1cd)
 
-5、集成Vue全家桶
+### 5、集成Vue全家桶
 安装依赖
 ```
 npm install vue vuex vue-router -S
@@ -551,6 +551,8 @@ new Vue({
 ```
 建好这些文件过后其实后面的代码书写就跟脚手架搭建好的写法一样，这里就不在演示其它文件的代码怎么书写了，到时可以参考我的源代码。
 
+> 这儿引入vue-router和vuex过后，根据官方文档做好配置即可开始测试，我这个只测试了vue和vue-router的功能正常，vuex暂时只建立了文件，但未进行实际引入测试。后面我会把源代码提交到github供大家参考
+
 这个时候，我们直接npm run dev的话会打包，所以我们需要修改一下package.json的scripts中的dev改成如下的代码：
 ```
 "scripts": {
@@ -558,7 +560,11 @@ new Vue({
   "dev": "webpack-dev-server --config ./build/webpack.config.js"
 },
 ```
+走到这步，如果你做好了前面的工作，理论上这儿执行npm run dev后就能看到效果了，我这儿的效果如图所示：
 
+![6.gif](https://i.loli.net/2019/12/12/uKvnxQhtjTBfF5I.gif)
+
+### 6、区分开发环境和生产环境
 
 
 
