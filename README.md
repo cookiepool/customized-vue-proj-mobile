@@ -329,10 +329,7 @@ npm install url-loader file-loader -D
 ```
 npm install vue-loader vue-template-compiler -D
 ```
-然后安装vue核心
-```
-npm install vue -S
-```
+
 - vue-loader必须结合vue-template-compiler来使用，否则是不能完成转换的。
 
 首先配置module里面的内容：
@@ -493,7 +490,7 @@ new webpack.DefinePlugin({
 ```
 那么我们最终打包过后访问到的process.env.NODE_ENV的值就是development。
 
-另一种使用webpack4自己集成了的环境判断，我们只需要在配置文件里面生命mode即可，推荐使用这种
+另一种使用webpack4自己集成了的环境判断，我们只需要在配置文件里面声明mode即可，推荐使用这种
 
 - 使用webpack4的mode参数
 ```
@@ -549,11 +546,11 @@ new Vue({
   render: h => h(App)
 }).$mount("#app");
 ```
-建好这些文件过后其实后面的代码书写就跟脚手架搭建好的写法一样，这里就不在演示其它文件的代码怎么书写了，到时可以参考我的源代码。
+建好这些文件过后其实后面的代码书写就跟官方脚手架搭建好的写法一样，这里就不在演示其它文件的代码怎么书写了，到时可以参考我的源代码。
 
 > 这儿引入vue-router和vuex过后，根据官方文档做好配置即可开始测试，我这个只测试了vue和vue-router的功能正常，vuex暂时只建立了文件，但未进行实际引入测试。后面我会把源代码提交到github供大家参考
 
-这个时候，我们直接npm run dev的话会打包，所以我们需要修改一下package.json的scripts中的dev改成如下的代码：
+这个时候，我们直接npm run dev的话会打包，所以我们需要把package.json的scripts中的dev改成如下的代码：
 ```
 "scripts": {
   "test": "echo \"Error: no test specified\" && exit 1",
@@ -565,6 +562,6 @@ new Vue({
 ![6.gif](https://i.loli.net/2019/12/12/uKvnxQhtjTBfF5I.gif)
 
 ### 6、区分开发环境和生产环境
-
+做单页面开发我们都知道，开发环境和生产环境是不太一样的，平时使用官方cli时开发命令用的npm run dev，而打包发布时npm run build。这里面的配置肯定存在区别。
 
 
