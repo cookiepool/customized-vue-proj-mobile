@@ -11,6 +11,8 @@
     <div class="bg-test"></div>
     <hr>
     <button @click="jumpToRouterTest">路由测试</button>
+    <hr>
+    <img class="static-test" src="static/bg_test.png" alt="图片">
   </div>
 </template>
 
@@ -51,5 +53,8 @@ export default {
     background-image: url('../assets/images/bg_test.png');
     background-repeat: no-repeat;
     background-size: contain;
+  }
+  .static-test {
+    width: 288px;
   }
 </style>
