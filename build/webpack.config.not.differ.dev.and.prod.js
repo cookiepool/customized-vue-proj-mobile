@@ -5,14 +5,15 @@ const path = require("path");
 const htmlWebpackPlugin = require('html-webpack-plugin');
 // 引入vue-loader插件
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
-// 用于提取css到文件中
-const miniCssExtractPlugin = require('mini-css-extract-plugin');
-// 用于压缩css代码
-const optimizeCssnanoPlugin = require('@intervolga/optimize-cssnano-plugin');
-// 拷贝静态资源
-const copyWebpackPlugin = require('copy-webpack-plugin');
+// 引入webpack
+const webpack = require('webpack');
+// 引入清除打包后文件的插件（最新版的需要解构，不然会报不是构造函数的错，而且名字必须写CleanWebpackPlugin）
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
+  // 指定模式，这儿有none production development三个参数可选
+  // 具体作用请查阅官方文档，（跟下面的DefinePlugin二选一）
+  mode: "development",
   // webpack打包的入口文件
   entry: {
     main: path.resolve(__dirname, "../src/main.js")
@@ -43,7 +44,7 @@ module.exports = {
         test: /\.(scss|sass)$/,
         use: [
           {
-            loader: miniCssExtractPlugin.loader, // 使用miniCssExtractPlugin.loader代替style-loader
+            loader: 'style-loader',
           },
           {
             loader: 'css-loader',
@@ -121,6 +122,7 @@ module.exports = {
     ]
   },
   plugins: [
+    new CleanWebpackPlugin(),
     new htmlWebpackPlugin({
       // 指定模板
       template: path.resolve(__dirname, '../public/index.html'),
@@ -128,27 +130,16 @@ module.exports = {
       filename: path.resolve(__dirname, '../dist/index.html')
     }),
     new VueLoaderPlugin(),
-    // 新建miniCssExtractPlugin实例并配置
-    new miniCssExtractPlugin({
-      filename: 'css/[name].[hash:4].css',
-      chunkFilename: 'css/[name].[hash:4].css'
-    }),
-    // 压缩css
-    new optimizeCssnanoPlugin({
-      sourceMap: true,
-      cssnanoOptions: {
-        preset: ['default', {
-          discardComments: {
-            removeAll: true,
-          },
-        }],
-      },
-    }),
-    // 拷贝静态资源
-    new copyWebpackPlugin([{
-      from: path.resolve(__dirname, '../public'),
-      to: path.resolve(__dirname, '../dist')
-    }])
+    // 辅助HotModuleReplacementPlugin插件
+    new webpack.NamedModulesPlugin(),
+    // 启用热更新必须的
+    new webpack.HotModuleReplacementPlugin(),
+    // 定义环境变量（跟上面mode的参数二选一即可）
+    // new webpack.DefinePlugin({
+    //   'process.env': {
+    //     NODE_ENV: JSON.stringify('development')
+    //   }
+    // })
   ],
   resolve: {
 		alias: {
@@ -160,5 +151,13 @@ module.exports = {
     // 添加一个 resolve.extensions 属性，方便我们引入依赖或者文件的时候可以省略后缀
     // 我们在引入文件时可以这样写 import api from '@/api/api'。
     extensions: ['*', '.js', '.vue']
-	}
+	},
+  devServer: {
+    // 默认情况不设置这个只能通过localhost:9000来访问，现在可以通过本机局域网ip来访问，
+    // 比如192.168.12.21:9000，手机在这个局网内也可以访问
+    host: '0.0.0.0',
+    hot: true,
+    port: 9200,
+    contentBase: './dist'
+  }
 };
