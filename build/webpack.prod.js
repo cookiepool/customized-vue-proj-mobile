@@ -13,6 +13,30 @@ module.exports = merge(webpackCommonConfig, {
   // 指定模式，这儿有none production development三个参数可选
   // 具体作用请查阅官方文档
   mode: "production",
+  module: {
+    rules: [
+      {
+        test: /\.(scss|sass)$/,
+        use: [
+          {
+            loader: miniCssExtractPlugin.loader, // 使用miniCssExtractPlugin.loader代替style-loader
+          },
+          {
+            loader: 'css-loader',
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              implementation: require('dart-sass')
+            }
+          },
+          {
+            loader: 'postcss-loader'
+          }
+        ]
+      }
+    ]
+  },
   plugins: [
     new CleanWebpackPlugin(),
     new webpackBundleAnalyzer({

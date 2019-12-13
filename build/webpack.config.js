@@ -35,27 +35,23 @@ module.exports = {
         exclude: /node_modules/,
         use: [
           {
-            loader: 'babel-loader'
+            loader: 'babel-loader',
+            options: {
+              // 使用vue官方的懒加载语法并结合babel需使用这个插件，不然会报错
+              plugins: ["@babel/plugin-syntax-dynamic-import"]
+            }
           }	
         ]
       },
       {
-        test: /\.(scss|sass)$/,
+        test: /\.css$/,
+        // 这儿组件库的css一般都是处理过的，我们使用一般的loader即可
         use: [
           {
-            loader: miniCssExtractPlugin.loader, // 使用miniCssExtractPlugin.loader代替style-loader
+            loader: 'style-loader',
           },
           {
             loader: 'css-loader',
-          },
-          {
-            loader: 'sass-loader',
-            options: {
-              implementation: require('dart-sass')
-            }
-          },
-          {
-            loader: 'postcss-loader'
           }
         ]
       },

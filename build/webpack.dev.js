@@ -10,6 +10,30 @@ module.exports = merge(webpackCommonConfig, {
   // 指定模式，这儿有none production development三个参数可选
   // 具体作用请查阅官方文档
   mode: "development",
+  module: {
+    rules: [
+      {
+        test: /\.(scss|sass)$/,
+        use: [
+          {
+            loader: 'style-loader', // 开发环境还是使用style-loader，不然无法及时响应样式变化
+          },
+          {
+            loader: 'css-loader',
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              implementation: require('dart-sass')
+            }
+          },
+          {
+            loader: 'postcss-loader'
+          }
+        ]
+      }
+    ]
+  },
   plugins: [
     // 辅助HotModuleReplacementPlugin插件
     new webpack.NamedModulesPlugin(),
