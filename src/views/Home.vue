@@ -11,6 +11,7 @@
     <div class="bg-test"></div>
     <hr>
     <button @click="jumpToRouterTest">路由测试</button>
+    <button @click="jumpToVantTest">vant组件测试</button>
     <hr>
     <img class="static-test" src="static/bg_test.png" alt="图片">
   </div>
@@ -35,6 +36,9 @@ export default {
   methods: {
     jumpToRouterTest() {
       this.$router.push('/routertest');
+    },
+    jumpToVantTest() {
+      this.$router.push('/vanttest');
     }
   }
 }
