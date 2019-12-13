@@ -35,7 +35,8 @@ module.exports = merge(webpackCommonConfig, {
     ]
   },
   plugins: [
-    // 辅助HotModuleReplacementPlugin插件
+    // 辅助HotModuleReplacementPlugin插件，给模块增加标识
+    // 生产环境可以用new webpack.HashedModuleIdsPlugin()
     new webpack.NamedModulesPlugin(),
     // 启用热更新必须的
     new webpack.HotModuleReplacementPlugin(),

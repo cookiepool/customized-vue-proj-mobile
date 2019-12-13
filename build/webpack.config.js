@@ -5,10 +5,6 @@ const path = require("path");
 const htmlWebpackPlugin = require('html-webpack-plugin');
 // 引入vue-loader插件
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
-// 用于提取css到文件中
-const miniCssExtractPlugin = require('mini-css-extract-plugin');
-// 用于压缩css代码
-const optimizeCssnanoPlugin = require('@intervolga/optimize-cssnano-plugin');
 // 拷贝静态资源
 const copyWebpackPlugin = require('copy-webpack-plugin');
 
@@ -120,22 +116,6 @@ module.exports = {
       filename: path.resolve(__dirname, '../dist/index.html')
     }),
     new VueLoaderPlugin(),
-    // 新建miniCssExtractPlugin实例并配置
-    new miniCssExtractPlugin({
-      filename: 'css/[name].[hash:4].css',
-      chunkFilename: 'css/[name].[hash:4].css'
-    }),
-    // 压缩css
-    new optimizeCssnanoPlugin({
-      sourceMap: true,
-      cssnanoOptions: {
-        preset: ['default', {
-          discardComments: {
-            removeAll: true,
-          },
-        }],
-      },
-    }),
     // 拷贝静态资源
     new copyWebpackPlugin([{
       from: path.resolve(__dirname, '../public'),
