@@ -9,5 +9,13 @@ module.exports = {
       // 指定corejs版本
       "corejs": 2
     }]
+  ],
+  // 按需加载vant组件
+  plugins: [
+    ["import", {
+      libraryName: 'vant',
+      libraryDirectory: 'es',
+      style: true
+    }, 'vant']
   ]
 }
