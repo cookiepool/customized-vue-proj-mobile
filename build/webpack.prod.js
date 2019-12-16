@@ -18,14 +18,17 @@ module.exports = merge(webpackCommonConfig, {
   // 具体作用请查阅官方文档
   mode: "production",
   optimization: {
+    runtimeChunk: true,
     splitChunks: {
       cacheGroups: {
+        // node_modules下的模块拆分到chunk-vendors.xxxx.js下
         vendors: {
           name: 'chunk-vendors',
           test: /[\\\/]node_modules[\\\/]/,
           priority: -10,
           chunks: 'all'
         },
+        // 自己定义的公告组件超过两次引用的放在chunk-common.xxxx.js下
         common: {
           name: 'chunk-common',
           minChunks: 2,
