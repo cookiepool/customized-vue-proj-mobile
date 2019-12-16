@@ -23,9 +23,9 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .text {
-    color: firebrick !important;
+    color: green !important;
   }
   .text-lorem {
     color: salmon;
