@@ -28,12 +28,23 @@
 ```sh
 npm install
 ```
-
-## Run tests
-
-```sh
-npm run test
+## Development
 ```
+npm run dev
+```
+
+## Production
+```
+npm run build
+```
+
+## Feature
+
+- 支持px自动转换为rem或vw，具体配置见postcss.config.js。
+- 支持路由懒加载，具体写法见router.js。
+- 支持代码拆分。
+- 已经集成vue、vuex、vue-router，另加vant组件库。
+
 
 ## Author
 
