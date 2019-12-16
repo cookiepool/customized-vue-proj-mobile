@@ -13,9 +13,9 @@ import App from '../App.vue';
 const Home = () =>
   import(/* webpackChunkName: "group-foo-1" */ "../views/Home.vue");
 const RouterTest = () =>
-  import(/* webpackChunkName: "group-foo-2" */ "../views/RouterTest.vue");
+  import(/* webpackChunkName: "group-foo-1" */ "../views/RouterTest.vue");
 const VantTest = () =>
-  import(/* webpackChunkName: "group-foo-3" */ "../views/VantTest.vue");
+  import(/* webpackChunkName: "group-foo-1" */ "../views/VantTest.vue");
 
 const routes = [
   {
