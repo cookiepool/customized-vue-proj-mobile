@@ -22,7 +22,7 @@ export default {
     }
   },
   components: {
-    HeadCommon,
+    HeadCommon
   },
   methods: {
     openDialog() {

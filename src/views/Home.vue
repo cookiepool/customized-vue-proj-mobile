@@ -16,7 +16,6 @@
     <img class="static-test" src="static/bg_test.png" alt="图片">
   </div>
 </template>
-
 <script>
 import HeadCommon from '../components/header/HeadCommon.vue';
 
@@ -43,7 +42,6 @@ export default {
   }
 }
 </script>
-
 <style lang="scss" scoped>
   .container {
     width: 100%;

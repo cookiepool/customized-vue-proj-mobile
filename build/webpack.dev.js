@@ -9,7 +9,7 @@ const merge = require('webpack-merge');
 module.exports = merge(webpackCommonConfig, {
   // 指定模式，这儿有none production development三个参数可选
   // 具体作用请查阅官方文档
-  mode: "development",
+  mode: 'development',
   module: {
     rules: [
       {
@@ -31,6 +31,12 @@ module.exports = merge(webpackCommonConfig, {
             loader: 'postcss-loader'
           }
         ]
+      },
+      {
+        enforce: 'pre',
+        test: /\.(js|vue)$/,
+        loader: 'eslint-loader',
+        exclude: /node_modules/
       }
     ]
   },
