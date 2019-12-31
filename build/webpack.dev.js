@@ -36,7 +36,10 @@ module.exports = merge(webpackCommonConfig, {
         enforce: 'pre',
         test: /\.(js|vue)$/,
         loader: 'eslint-loader',
-        exclude: /node_modules/
+        exclude: /node_modules/,
+        options: {
+          formatter: require('eslint-friendly-formatter')
+        }
       }
     ]
   },
@@ -53,6 +56,11 @@ module.exports = merge(webpackCommonConfig, {
     host: '0.0.0.0',
     hot: true,
     port: 9200,
-    contentBase: './dist'
+    contentBase: './dist',
+    clientLogLevel: "error", // 关闭在浏览器控制台显示消息的功能，可能的值有 none, error, warning 或者 info（默认值）。这里我设置为只显示错误消息
+    overlay: {
+      errors: true,
+      warnings: true
+    }
   }
 });
