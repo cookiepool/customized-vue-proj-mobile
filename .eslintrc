@@ -1,0 +1,20 @@
+{
+  "root": true,
+  "env": {
+    "node": true,
+    "browser": true
+  },
+  "parserOptions": {
+    "parser": "babel-eslint",
+    "sourceMap": "module",
+    "ecmaVersion": 7
+  },
+  "extends": [
+    "plugin:vue/essential",
+    "standard"
+  ],
+  "rules": {
+    "semi": "off", // 关闭语句后不能使用分号的规则
+    "space-before-function-paren": "off" // 关闭函数函数声明在小括号前必须加空格的规则
+  }
+}
