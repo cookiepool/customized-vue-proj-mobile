@@ -44,7 +44,7 @@ npm run build
 - 支持路由懒加载，具体写法见router.js。
 - 支持代码拆分。
 - 已经集成vue、vuex、vue-router，另加vant组件库。
-
+- 集成ESLint，支持开发环境和git commit提交检测。
 
 ## Author
 
