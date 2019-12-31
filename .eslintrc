@@ -15,6 +15,9 @@
   ],
   "rules": {
     "semi": "off", // 关闭语句后不能使用分号的规则
-    "space-before-function-paren": "off" // 关闭函数函数声明在小括号前必须加空格的规则
+    "space-before-function-paren": "off", // 关闭函数函数声明在小括号前必须加空格的规则
+    "no-trailing-spaces": "off", // 关闭禁用行尾空格
+    "eol-last": "off", // 关闭要求或禁止文件末尾存在空行
+    "comma-dangle": "warn" // 出现拖尾逗号仅反馈警告，而不是报错
   }
 }
