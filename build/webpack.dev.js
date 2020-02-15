@@ -5,6 +5,8 @@ const webpack = require('webpack');
 const webpackCommonConfig = require('./webpack.config.js');
 // 引入配置合并插件
 const merge = require('webpack-merge');
+// 引入控制台提示插件（针对webpack-dev-server）
+const friendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
 module.exports = merge(webpackCommonConfig, {
   // 指定模式，这儿有none production development三个参数可选
@@ -49,6 +51,11 @@ module.exports = merge(webpackCommonConfig, {
     new webpack.NamedModulesPlugin(),
     // 启用热更新必须的
     new webpack.HotModuleReplacementPlugin(),
+    new friendlyErrorsWebpackPlugin({
+      compilationSuccessInfo: {
+        messages: [`Your application is running here: 127.0.0.1:9200`]
+      }
+    })
   ],
   devServer: {
     // 默认情况不设置这个只能通过localhost:9000来访问，现在可以通过本机局域网ip来访问，
@@ -61,6 +68,7 @@ module.exports = merge(webpackCommonConfig, {
     overlay: {
       errors: true,
       warnings: true
-    }
+    },
+    quiet: true
   }
 });
