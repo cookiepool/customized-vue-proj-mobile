@@ -6,7 +6,7 @@
   },
   "parserOptions": {
     "parser": "babel-eslint",
-    "sourceMap": "module",
+    "sourceType": "module",
     "ecmaVersion": 7
   },
   "extends": [
