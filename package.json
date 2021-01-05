@@ -66,7 +66,7 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "core-js": "^2.6.10",
     "vant": "^2.2.16",
     "vue": "^2.6.10",
